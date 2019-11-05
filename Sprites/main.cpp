@@ -18,7 +18,7 @@ using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 
-
+const int ASCII_ESC = 27;
 
 
 void InitGame(MyD3D& d3d)
@@ -66,7 +66,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_CHAR:
 		switch (wParam)
 		{
-		case 27:
+		case ASCII_ESC:
 		case 'q':
 		case 'Q':
 			PostQuitMessage(0);
@@ -90,19 +90,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	MyD3D d3d;
 	if (!d3d.InitDirect3D(OnResize))
 		assert(false);
-	WinUtil::Get().SetD3D(d3d);
+	WinUtil& wu = WinUtil::Get();
+	wu.SetD3D(d3d);
 	InitGame(d3d);
 
 	bool canUpdateRender;
 	float dTime = 0;
-	while (WinUtil::Get().BeginLoop(canUpdateRender))
+	while (wu.BeginLoop(canUpdateRender))
 	{
 		if (canUpdateRender)
 		{
 			Update(dTime, d3d);
 			Render(dTime, d3d);
 		}
-		dTime = WinUtil::Get().EndLoop(canUpdateRender);
+		dTime = wu.EndLoop(canUpdateRender);
 	}
 
 	ReleaseGame();
